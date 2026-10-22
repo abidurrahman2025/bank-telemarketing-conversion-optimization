@@ -42,7 +42,7 @@ sns.set_theme(style="whitegrid")
 # %matplotlib inline
 
 """## 1. Data Loading & Preprocessing
-We load the dataset and immediately drop the `duration` column. Including it would create an artificially perfect predictive model because the duration of the call is only known after the customer has already responded.
+Loaded the dataset and immediately drop the `duration` column. Including it would create an artificially perfect predictive model because the duration of the call is only known after the customer has already responded.
 """
 
 # Load dataset from Google Drive (assuming bank.csv uses ';' as separator)
@@ -62,7 +62,7 @@ print(f"Dataset shape: {df.shape}")
 display(df.head())
 
 """## 2. Data Partitioning
-We split the data into a 60% Training set and a 40% Validation set. Stratified sampling ensures the proportion of buyers (the rare class) is consistent in both sets.
+Split the data into a 60% Training set and a 40% Validation set. Stratified sampling ensures the proportion of buyers (the rare class) is consistent in both sets.
 """
 
 X_train, X_valid, y_train, y_valid = train_test_split(
@@ -73,7 +73,7 @@ print(f"Training set: {X_train.shape[0]} records")
 print(f"Validation set: {X_valid.shape[0]} records")
 
 """## 3. Customer Segmentation (Unsupervised Learning)
-We use K-Means clustering on the numerical features to segment customers based on their engagement and financial profiles. We must standardize the data first so that "balance" (in thousands) doesn't overpower "age" (in tens) when calculating Euclidean distance.
+Used K-Means clustering on the numerical features to segment customers based on their engagement and financial profiles. Standardized the data first so that "balance" (in thousands) doesn't overpower "age" (in tens) when calculating Euclidean distance.
 """
 
 # Select numerical features for clustering
@@ -129,7 +129,7 @@ X_train_encoded, X_valid_encoded = X_train_encoded.align(X_valid_encoded, join='
 print(f"Encoded Training shape: {X_train_encoded.shape}")
 
 """## 5. Model Building & Cross-Validation
-We build two models: Logistic Regression (interpretable baseline) and Random Forest (non-linear, robust).
+Built two models: Logistic Regression (interpretable baseline) and Random Forest (non-linear, robust).
 To handle the rare "yes" class (~11%), we use **SMOTE**. However, we apply SMOTE *inside* an `ImbPipeline`. This ensures that during 10-fold Cross-Validation, SMOTE is only applied to the 9 training folds, and the 1 validation fold remains untouched. This prevents data leakage and fake perfect scores.
 """
 
@@ -163,7 +163,7 @@ rf_pipeline.fit(X_train_encoded, y_train)
 lr_pipeline.fit(X_train_encoded, y_train)
 
 """## 6. Evaluation on Unseen Validation Set
-We evaluate the Random Forest model on the 40% holdout validation set.
+Evaluated the Random Forest model on the 40% holdout validation set.
 **Accuracy is a misleading metric here** because predicting "No" for everyone yields 88% accuracy. Instead, we look at the Confusion Matrix, ROC-AUC, and the Lift Chart.
 """
 
@@ -234,7 +234,7 @@ plt.ylabel('')
 plt.show()
 
 """## 7. Optimization & Cutoff Tuning
-If the bank wants to be highly selective to save call costs (e.g., only call if probability > 0.4), we can tune the cutoff threshold. We visualize how accuracy changes, keeping in mind that Sensitivity (catching buyers) is often more important than overall Accuracy in marketing.
+If the bank wants to be highly selective to save call costs (e.g., only call if probability > 0.4), we can tune the cutoff threshold. I visualized how accuracy changes, keeping in mind that Sensitivity (catching buyers) is often more important than overall Accuracy in marketing.
 """
 
 # Visualize Accuracy vs. Cutoff
@@ -257,7 +257,7 @@ Based on the analysis, we can provide the following actionable insights:
 
 1. **The Lift Chart Proves ROI:** The model provides a significant lift over random targeting. By focusing telemarketing efforts on the top 10-20% of the model's predicted probabilities, the bank can achieve a conversion rate of ~30-50%, compared to the baseline of 11.5%.
 2. **Top Drivers:** `balance`, `age`, and `poutcome_success` are the most critical features. Older customers with higher balances who had a successful outcome in a previous campaign are the warmest leads.
-3. **Segmentation:** We identified a distinct segment (Segment 2) that has a baseline conversion rate of 22%. The marketing team can design a hyper-targeted VIP campaign for this group.
+3. **Segmentation:** I identified a distinct segment (Segment 2) that has a baseline conversion rate of 22%. The marketing team can design a hyper-targeted VIP campaign for this group.
 
 **Recommendation:** Deploy the Random Forest model to score the customer database. Prioritize calling the top 2 deciles. Use the saved budget (from not calling the bottom 8 deciles) to run a premium campaign for the high-value Segment 2.
 """
