@@ -1,10 +1,3 @@
-### GitHub Repository Title
-**Bank Telemarketing Campaign Optimization: Predictive Modeling and Customer Segmentation for Term Deposit Conversion**
-
-***
-
-### README.md
-
 # Bank Telemarketing Campaign Optimization
 
 ## Project Overview
